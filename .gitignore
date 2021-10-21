@@ -10,3 +10,4 @@
 .idea/
 target/
 config-server/target
+discovery-server/target
