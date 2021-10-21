@@ -8,3 +8,5 @@
 /httpRequests/
 
 .idea/
+target/
+config-server/target
