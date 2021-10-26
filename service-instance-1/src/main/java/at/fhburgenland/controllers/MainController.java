@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class Controller {
+public class MainController {
 
     @GetMapping("/")
     public String home() {
@@ -23,21 +23,17 @@ public class Controller {
         return dbService.readAll();
     }
 
-    @RequestMapping("/readSensor/{sensorId}")
-    public String readSensor(@PathVariable String sensorId) {
+    @GetMapping(value = "/readSensor")
+    public Sensor readSensor(@RequestParam("id") String id) {
         DBService dbService = DBService.getInstance();
-        return dbService.readSensorEntries(sensorId).toString();
+        return dbService.readSensor(id);
     }
 
     @PutMapping("/update")
-    public String updateSensor(@RequestParam(value = "id") String id,
-                               @RequestParam(value = "temperature") String temperature,
-                               @RequestParam(value = "humidity") String humidity,
-                               @RequestParam(value = "timestamp") String timestamp) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime dateTime = LocalDateTime.parse(timestamp, formatter);
+    public String updateSensor(@RequestBody Map<String, String> body) {
+        LocalDateTime dateTime = LocalDateTime.parse(body.get("timestamp"), DateTimeFormatter.ISO_DATE_TIME);
         DBService dbService = DBService.getInstance();
-        dbService.updateSensor(Integer.valueOf(id), dateTime, Double.parseDouble(temperature), Double.parseDouble(humidity));
+        dbService.updateSensor(Integer.valueOf(body.get("id")), dateTime, Double.parseDouble(body.get("temperature")), Double.parseDouble(body.get("humidity")));
         return "Update successfully!";
     }
 
@@ -45,8 +41,7 @@ public class Controller {
     public List<Sensor> deleteSensor(@RequestBody Map<String, Integer> body) {
         DBService dbService = DBService.getInstance();
         Integer id = body.get("id");
-        Sensor sensor = dbService.readSensor(id);
-        dbService.deleteSensor(sensor);
+        dbService.deleteSensor(id);
         return dbService.readAll();
     }
 

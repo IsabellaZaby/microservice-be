@@ -72,11 +72,11 @@ public class DBService {
         return sensorList;
     }
 
-    public Sensor readSensor(Integer id) {
+    public Sensor readSensor(String id) {
         EntityManager em = emf.createEntityManager();
         String query = "SELECT s FROM Sensor s WHERE s.id = :id";
         TypedQuery<Sensor> tp = em.createQuery(query, Sensor.class);
-        tp.setParameter("id", id);
+        tp.setParameter("id", Integer.valueOf(id));
         Sensor sensor = null;
 
         try {
@@ -92,7 +92,7 @@ public class DBService {
 
     public List<Sensor> readSensorEntries(String sensorId) {
         EntityManager em = emf.createEntityManager();
-        String query = "SELECT s.temperature, s.humidity, s.timestamp FROM Sensor s WHERE s.sensor_id = :sensorId";
+        String query = "SELECT s FROM Sensor s WHERE s.sensor_id = :sensorId";
         TypedQuery<Sensor> tp = em.createQuery(query, Sensor.class);
         tp.setParameter("sensorId", sensorId);
         List<Sensor> sensor = null;
@@ -110,13 +110,12 @@ public class DBService {
     public void updateSensor(Integer id, LocalDateTime timestamp, Double temperature, Double humidity) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction et = null;
-        Sensor sensor = null;
 
         try {
             et = em.getTransaction();
             et.begin();
 
-            sensor = readSensor(id);
+            Sensor sensor = em.find(Sensor.class, id);
 
             if (sensor != null) {
                 sensor.setTimestamp(timestamp);
@@ -135,13 +134,14 @@ public class DBService {
         }
     }
 
-    public void deleteSensor(Sensor sensor) {
+    public void deleteSensor(Integer id) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction entityTransaction = null;
 
         try {
             entityTransaction = em.getTransaction();
             entityTransaction.begin();
+            Sensor sensor = em.find(Sensor.class, id);
             em.remove(sensor);
             entityTransaction.commit();
         } catch (Exception e) {
