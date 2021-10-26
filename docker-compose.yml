@@ -49,10 +49,26 @@ services:
       PRING_DATASOURCE_PASSWORD: docker
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
+  microservice2:
+    depends_on:
+      configserver:
+        condition: service_healthy
+    build: ./service-instance-2
+    restart: on-failure
+
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discoveryserver:8083/eureka
+      SPRING_CLOUD_CONFIG_URI: http://configserver:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://PostgreSQL:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      PRING_DATASOURCE_PASSWORD: docker
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
   gateway:
     depends_on:
       - discoveryserver
       - microservice
+      - microservice2
     build: ./gateway
     restart: on-failure
     ports:

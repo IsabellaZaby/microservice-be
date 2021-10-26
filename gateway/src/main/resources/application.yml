@@ -8,6 +8,9 @@ spring:
     name: gateway
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -22,10 +25,11 @@ spring:
       routes:
         - uri: lb://MICROSERVICE
           predicates:
-            - Path=/*
-      discovery:
-        locator:
-          enabled: true
+            - Path=/read*
+        - uri: lb://MICROSERVICE2
+          predicates:
+            - Path=/add*, /update*, /delete*
+
 
 eureka:
   client:
