@@ -10,7 +10,7 @@
             <!-- Driver for DB database -->
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <!-- URL for DB -->
-            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://PostgreSQL:5432/postgres"/>
             <!-- Username -->
             <property name="javax.persistence.jdbc.user" value="postgres"/>
             <!-- Password -->

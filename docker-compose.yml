@@ -1,0 +1,64 @@
+version: '2.1'
+services:
+  PostgreSQL:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./create_database.sql:/docker-entrypoint-initdb.d/create_database.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  configserver:
+    build: ./config-server
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/microservice/default" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  discoveryserver:
+    build: ./discovery-server
+    depends_on:
+      - configserver
+    ports:
+      - "127.0.0.1:8083:8083"
+    restart: on-failure
+
+
+  microservice:
+    depends_on:
+      configserver:
+        condition: service_healthy
+    build: ./service-instance-1
+    restart: on-failure
+
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discoveryserver:8083/eureka
+      SPRING_CLOUD_CONFIG_URI: http://configserver:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://PostgreSQL:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      PRING_DATASOURCE_PASSWORD: docker
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+  gateway:
+    depends_on:
+      - discoveryserver
+      - microservice
+    build: ./gateway
+    restart: on-failure
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      SPRING_CLOUD_CONFIG_URI: http://configserver:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discoveryserver:8083/eureka
+
+
