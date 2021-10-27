@@ -5,7 +5,10 @@
 - API Gateway
 - Server Instance 1 
 
-###To start the application run:
+### Prerequisites 
+Need to have `Docker` installed.
+
+### To start the application run in the directory:
 ```
 docker-compose config
 
