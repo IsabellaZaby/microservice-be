@@ -22,29 +22,9 @@ public class DBService {
         return instance;
     }
 
-    public void addSensor(Sensor sensor) {
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction entityTransaction = null;
-
-        try {
-            entityTransaction = em.getTransaction();
-            entityTransaction.begin();
-            em.persist(sensor);
-            entityTransaction.commit();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (entityTransaction != null) {
-                entityTransaction.rollback();
-            }
-        } finally {
-            em.close();
-        }
-    }
-
     public List<String> readAllDistinct() {
         EntityManager em = emf.createEntityManager();
-        String query = "SELECT DISTINCT s.sensor_id FROM Sensor s ORDER BY s.id";
+        String query = "SELECT DISTINCT s.sensor_id FROM Sensor s";
         TypedQuery<String> tp = em.createQuery(query, String.class);
         List<String> sensorList = null;
         try {
@@ -92,7 +72,7 @@ public class DBService {
 
     public List<Sensor> readSensorEntries(String sensorId) {
         EntityManager em = emf.createEntityManager();
-        String query = "SELECT s FROM Sensor s WHERE s.sensor_id = :sensorId";
+        String query = "SELECT s FROM Sensor s WHERE s.sensor_id = :sensorId ORDER BY s.timestamp";
         TypedQuery<Sensor> tp = em.createQuery(query, Sensor.class);
         tp.setParameter("sensorId", sensorId);
         List<Sensor> sensor = null;
@@ -105,53 +85,6 @@ public class DBService {
             em.close();
         }
         return sensor;
-    }
-
-    public void updateSensor(Integer id, LocalDateTime timestamp, Double temperature, Double humidity) {
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction et = null;
-
-        try {
-            et = em.getTransaction();
-            et.begin();
-
-            Sensor sensor = em.find(Sensor.class, id);
-
-            if (sensor != null) {
-                sensor.setTimestamp(timestamp);
-                sensor.setTemperature(temperature);
-                sensor.setHumidity(humidity);
-            }
-
-            em.persist(sensor);
-            et.commit();
-        } catch (Exception ex) {
-            if (et != null) {
-                et.rollback();
-            }
-        } finally {
-            em.close();
-        }
-    }
-
-    public void deleteSensor(Integer id) {
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction entityTransaction = null;
-
-        try {
-            entityTransaction = em.getTransaction();
-            entityTransaction.begin();
-            Sensor sensor = em.find(Sensor.class, id);
-            em.remove(sensor);
-            entityTransaction.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (entityTransaction != null) {
-                entityTransaction.rollback();
-            }
-        } finally {
-            em.close();
-        }
     }
 
 }

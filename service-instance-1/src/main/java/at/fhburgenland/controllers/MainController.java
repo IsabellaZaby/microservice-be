@@ -1,5 +1,7 @@
 package at.fhburgenland.controllers;
 
+import at.fhburgenland.facades.DataFacade;
+import at.fhburgenland.models.ChartDTO;
 import at.fhburgenland.models.Sensor;
 import at.fhburgenland.services.DBService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,5 +28,11 @@ public class MainController {
     public Sensor readSensor(@RequestParam("id") String id) {
         DBService dbService = DBService.getInstance();
         return dbService.readSensor(id);
+    }
+
+    @GetMapping(value = "/readChartData")
+    public List<ChartDTO> readChartData() {
+        DataFacade dataFacade = new DataFacade();
+        return dataFacade.readChartData();
     }
 }

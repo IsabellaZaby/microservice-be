@@ -1,5 +1,6 @@
 package at.fhburgenland.services;
 
+import at.fhburgenland.models.DBError;
 import at.fhburgenland.models.Sensor;
 
 import javax.persistence.*;
@@ -22,7 +23,7 @@ public class DBService {
         return instance;
     }
 
-    public void addSensor(Sensor sensor) {
+    public void addSensor(Sensor sensor) throws DBError {
         EntityManager em = emf.createEntityManager();
         EntityTransaction entityTransaction = null;
 
@@ -37,27 +38,13 @@ public class DBService {
             if (entityTransaction != null) {
                 entityTransaction.rollback();
             }
+            throw new DBError("Adding of sensor failed, try again.");
         } finally {
             em.close();
         }
     }
 
-    public List<String> readAllDistinct() {
-        EntityManager em = emf.createEntityManager();
-        String query = "SELECT DISTINCT s.sensor_id FROM Sensor s ORDER BY s.id";
-        TypedQuery<String> tp = em.createQuery(query, String.class);
-        List<String> sensorList = null;
-        try {
-            sensorList = tp.getResultList();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            em.close();
-        }
-        return sensorList;
-    }
-
-    public List<Sensor> readAll() {
+    public List<Sensor> readAll() throws DBError {
         EntityManager em = emf.createEntityManager();
         String query = "SELECT s FROM Sensor s ORDER BY s.id";
         TypedQuery<Sensor> tp = em.createQuery(query, Sensor.class);
@@ -66,48 +53,14 @@ public class DBService {
             sensorList = tp.getResultList();
         } catch (Exception ex) {
             ex.printStackTrace();
+            throw new DBError("Reading of data failed.");
         } finally {
             em.close();
         }
         return sensorList;
     }
 
-    public Sensor readSensor(String id) {
-        EntityManager em = emf.createEntityManager();
-        String query = "SELECT s FROM Sensor s WHERE s.id = :id";
-        TypedQuery<Sensor> tp = em.createQuery(query, Sensor.class);
-        tp.setParameter("id", Integer.valueOf(id));
-        Sensor sensor = null;
-
-        try {
-            sensor = tp.getSingleResult();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            em.close();
-        }
-        return sensor;
-    }
-
-
-    public List<Sensor> readSensorEntries(String sensorId) {
-        EntityManager em = emf.createEntityManager();
-        String query = "SELECT s FROM Sensor s WHERE s.sensor_id = :sensorId";
-        TypedQuery<Sensor> tp = em.createQuery(query, Sensor.class);
-        tp.setParameter("sensorId", sensorId);
-        List<Sensor> sensor = null;
-
-        try {
-            sensor = tp.getResultList();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            em.close();
-        }
-        return sensor;
-    }
-
-    public void updateSensor(Integer id, LocalDateTime timestamp, Double temperature, Double humidity) {
+    public void updateSensor(Integer id, LocalDateTime timestamp, Double temperature, Double humidity) throws DBError {
         EntityManager em = emf.createEntityManager();
         EntityTransaction et = null;
 
@@ -129,12 +82,13 @@ public class DBService {
             if (et != null) {
                 et.rollback();
             }
+            throw new DBError("Update of sensor failed, try again.");
         } finally {
             em.close();
         }
     }
 
-    public void deleteSensor(Integer id) {
+    public void deleteSensor(Integer id) throws DBError {
         EntityManager em = emf.createEntityManager();
         EntityTransaction entityTransaction = null;
 
@@ -149,6 +103,7 @@ public class DBService {
             if (entityTransaction != null) {
                 entityTransaction.rollback();
             }
+            throw new DBError("Deletion of sensor failed, try again.");
         } finally {
             em.close();
         }

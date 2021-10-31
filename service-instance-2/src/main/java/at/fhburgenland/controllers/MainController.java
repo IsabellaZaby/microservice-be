@@ -1,5 +1,6 @@
 package at.fhburgenland.controllers;
 
+import at.fhburgenland.models.DBError;
 import at.fhburgenland.models.Sensor;
 import at.fhburgenland.services.DBService;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import java.util.Map;
 public class MainController {
 
     @PutMapping("/update")
-    public String updateSensor(@RequestBody Map<String, String> body) {
+    public String updateSensor(@RequestBody Map<String, String> body) throws DBError {
         LocalDateTime dateTime = LocalDateTime.parse(body.get("timestamp"), DateTimeFormatter.ISO_DATE_TIME);
         DBService dbService = DBService.getInstance();
         dbService.updateSensor(Integer.valueOf(body.get("id")), dateTime, Double.parseDouble(body.get("temperature")), Double.parseDouble(body.get("humidity")));
@@ -21,7 +22,7 @@ public class MainController {
     }
 
     @DeleteMapping("/delete")
-    public List<Sensor> deleteSensor(@RequestBody Map<String, Integer> body) {
+    public List<Sensor> deleteSensor(@RequestBody Map<String, Integer> body) throws DBError {
         DBService dbService = DBService.getInstance();
         Integer id = body.get("id");
         dbService.deleteSensor(id);
@@ -29,7 +30,7 @@ public class MainController {
     }
 
     @PostMapping("/add")
-    public String addSensor(@RequestBody Map<String, String> body) {
+    public String addSensor(@RequestBody Map<String, String> body) throws DBError {
         LocalDateTime dateTime = LocalDateTime.parse(body.get("timestamp"), DateTimeFormatter.ISO_DATE_TIME);
         DBService dbService = DBService.getInstance();
         Sensor sensor = new Sensor();
