@@ -3,7 +3,8 @@
 - Config Server
 - Discovery Server
 - API Gateway
-- Server Instance 1 
+- Server Instance 1 - Reading Operations
+- Server Instance 2 - Writing Operations
 
 ### Prerequisites 
 Need to have `Docker` installed.
