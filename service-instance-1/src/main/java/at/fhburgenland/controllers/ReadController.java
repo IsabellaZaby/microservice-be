@@ -11,12 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class MainController {
-
-    @GetMapping("/")
-    public String home() {
-        return "Hello World!";
-    }
+public class ReadController {
 
     @GetMapping("/readAll")
     public List<Sensor> readAll() {

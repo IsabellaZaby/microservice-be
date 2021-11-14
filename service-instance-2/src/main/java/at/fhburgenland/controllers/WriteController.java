@@ -11,13 +11,18 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class MainController {
+public class WriteController {
 
     @PutMapping("/update")
     public String updateSensor(@RequestBody Map<String, String> body) throws DBError {
         LocalDateTime dateTime = LocalDateTime.parse(body.get("timestamp"), DateTimeFormatter.ISO_DATE_TIME);
         DBService dbService = DBService.getInstance();
-        dbService.updateSensor(Integer.valueOf(body.get("id")), dateTime, Double.parseDouble(body.get("temperature")), Double.parseDouble(body.get("humidity")));
+        try {
+            dbService.updateSensor(Integer.valueOf(body.get("id")), dateTime, Double.parseDouble(body.get("temperature")),
+                Double.parseDouble(body.get("humidity")));
+        } catch (NumberFormatException e) {
+            throw new DBError("Not a number!");
+        }
         return "Update successfully!";
     }
 
@@ -36,9 +41,13 @@ public class MainController {
         Sensor sensor = new Sensor();
         sensor.setSensor_id(body.get("sensorId"));
         sensor.setTimestamp(dateTime);
-        sensor.setTemperature(Double.parseDouble(body.get("temperature")));
-        sensor.setHumidity(Double.parseDouble(body.get("humidity")));
-        dbService.addSensor(sensor);
+        try {
+            sensor.setTemperature(Double.parseDouble(body.get("temperature")));
+            sensor.setHumidity(Double.parseDouble(body.get("humidity")));
+            dbService.addSensor(sensor);
+        } catch (NumberFormatException e) {
+            throw new DBError("Not a number!");
+        }
         return "Sensor added";
     }
 }

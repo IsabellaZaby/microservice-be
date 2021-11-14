@@ -20,7 +20,7 @@ services:
     build: ./config-server
     restart: on-failure
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8888/microservice/default" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8084/microservice/default" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -43,7 +43,7 @@ services:
 
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discoveryserver:8083/eureka
-      SPRING_CLOUD_CONFIG_URI: http://configserver:8888
+      SPRING_CLOUD_CONFIG_URI: http://configserver:8084
       SPRING_DATASOURCE_URL: jdbc:postgresql://PostgreSQL:5432/postgres
       SPRING_DATASOURCE_USERNAME: postgres
       PRING_DATASOURCE_PASSWORD: docker
@@ -58,7 +58,7 @@ services:
 
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discoveryserver:8083/eureka
-      SPRING_CLOUD_CONFIG_URI: http://configserver:8888
+      SPRING_CLOUD_CONFIG_URI: http://configserver:8084
       SPRING_DATASOURCE_URL: jdbc:postgresql://PostgreSQL:5432/postgres
       SPRING_DATASOURCE_USERNAME: postgres
       PRING_DATASOURCE_PASSWORD: docker
@@ -74,7 +74,7 @@ services:
     ports:
       - "127.0.0.1:8080:8080"
     environment:
-      SPRING_CLOUD_CONFIG_URI: http://configserver:8888
+      SPRING_CLOUD_CONFIG_URI: http://configserver:8084
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discoveryserver:8083/eureka
 
 
