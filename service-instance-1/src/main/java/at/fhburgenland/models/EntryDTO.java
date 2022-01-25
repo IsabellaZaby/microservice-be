@@ -1,11 +1,20 @@
 package at.fhburgenland.models;
 
+import org.apache.tomcat.jni.Local;
+
 import java.time.LocalDateTime;
 
 public class EntryDTO {
     private LocalDateTime timestamp;
     private Double temperature;
     private Double humidity;
+
+    public EntryDTO() {}
+    public EntryDTO(LocalDateTime time, Double temperature, Double humidity) {
+        this.timestamp = time;
+        this.temperature = temperature;
+        this.humidity = humidity;
+    }
 
     public LocalDateTime getTimestamp() {
         return timestamp;

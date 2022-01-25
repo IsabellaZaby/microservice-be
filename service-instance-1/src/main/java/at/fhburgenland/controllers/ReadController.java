@@ -30,4 +30,10 @@ public class ReadController {
         DataFacade dataFacade = new DataFacade();
         return dataFacade.readChartData();
     }
+
+    @GetMapping(value = "/readMobileChartData")
+    public List<ChartDTO> readMobileChartData(@RequestParam("type") String type) {
+        DataFacade dataFacade = new DataFacade();
+        return dataFacade.readMobileChartData(type);
+    }
 }
